@@ -32,12 +32,6 @@ export class SquirrelDB<D = any> {
     this.predefinedTables = options.tables ?? [];
     this.path = options.filePath ?? "db.sqlite";
     this.db = new Database(this.path);
-    this.initDatabase();
-  }
-
-  private initDatabase(): void {
-    // Note: Predefined tables are just reserved names
-    // They must be initialized with initTable() before use
   }
 
   private createError(message: string, kind: ErrorKind): Error {
@@ -48,10 +42,6 @@ export class SquirrelDB<D = any> {
       writable: false
     });
     return error;
-  }
-
-  private async snapshot(): Promise<void> {
-    // Implementation for snapshotting
   }
 
   private getSQLiteType(type: ColumnType): string {
@@ -242,8 +232,6 @@ export class SquirrelDB<D = any> {
         ErrorKind.InvalidType
       );
     }
-
-    await this.snapshot();
     
     // Replicate to mirrors
     for (const mirror of this.mirrors) {
@@ -359,8 +347,6 @@ export class SquirrelDB<D = any> {
 
     const stmt = this.db.prepare(`DELETE FROM ${tableName} WHERE id = ?`);
     const result = stmt.run(id);
-
-    await this.snapshot();
     
     // Replicate to mirrors
     for (const mirror of this.mirrors) {
@@ -383,8 +369,6 @@ export class SquirrelDB<D = any> {
 
     const stmt = this.db.prepare(`DELETE FROM ${tableName}`);
     const result = stmt.run();
-
-    await this.snapshot();
     
     // Replicate to mirrors
     for (const mirror of this.mirrors) {
